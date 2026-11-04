@@ -24,13 +24,12 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: Initialize Project & Add Capacitor Android
+      - name: Install Capacitor & Add Android
         run: |
           npm init -y
           npm install @capacitor/core @capacitor/cli @capacitor/android
-          npx cap init "EasyWatts Solar Sizer" "co.za.easywatts.solar" --web-dir .
           npx cap add android
-          npx cap sync android
+          npx cap copy android
 
       - name: Build Debug APK with Gradle
         run: |
