@@ -40,13 +40,12 @@ jobs:
           fi
           cp "$HTML_FILE" www/index.html
 
-      - name: Configure Android Permissions and WebSettings
+      - name: Configure Android Permissions
         run: |
           cd easywatts_app
           
-          # Add Cordova Whitelist and InAppBrowser/File plugins for full share and download support
+          # Add only supported plugins
           cordova plugin add cordova-plugin-file
-          cordova plugin add cordova-plugin-whitelist
           
           # Inject storage and internet permissions into AndroidManifest.xml
           MANIFEST="platforms/android/app/src/main/AndroidManifest.xml"
