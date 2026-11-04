@@ -31,7 +31,15 @@ jobs:
           cd easywatts_app
           cordova platform add android
           rm -rf www/*
-          cp -r ../index.html www/
+          
+          # Automatically find any .html file in the repository root and copy it as index.html
+          HTML_FILE=$(find .. -maxdepth 1 -name "*.html" | head -n 1)
+          if [ -z "$HTML_FILE" ]; then
+            echo "Error: No HTML file found in repository root!"
+            exit 1
+          fi
+          echo "Found and using HTML file: $HTML_FILE"
+          cp "$HTML_FILE" www/index.html
 
       - name: Build Android Debug APK
         run: |
