@@ -1,0 +1,6 @@
+{
+  "appId": "co.za.easywatts.solar",
+  "appName": "EasyWatts Solar Sizer",
+  "webDir": ".",
+  "bundledWebRuntime": false
+}
