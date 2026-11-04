@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyWatts Solar Sizer</title>
+    <!-- Tailwind CSS for UI styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- jsPDF and AutoTable for PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans pb-12">
+
+    <!-- Header / Navbar -->
+    <header class="bg-amber-500 text-white shadow-md">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-sun text-2xl text-yellow-200"></i>
+                <h1 class="text-xl font-bold tracking-wide">EasyWatts Solar Sizer Pro</h1>
+            </div>
+            <a href="https://www.easywatts.co.za" target="_blank" class="bg-amber-600 hover:bg-amber-700 text-white text-xs md:text-sm px-3 py-1.5 rounded-lg border border-amber-400 flex items-center gap-1 transition">
+                <i class="fa-solid fa-globe"></i> Visit EasyWatts
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-4xl mx-auto px-4 mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <!-- Input Controls -->
+        <section class="md:col-span-2 space-y-6">
+
+            <!-- Customer Details Card -->
+            <div class="bg-white rounded-xl shadow-sm p-5 border border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-700 border-b pb-2 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-user text-amber-500"></i> Client Details
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Client Name</label>
+                        <input type="text" id="clientName" value="Valued Client" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-amber-400 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Location / Project</label>
+                        <input type="text" id="clientLocation" value="Gauteng" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-amber-400 outline-none">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inverter Brand & Model Preference Card -->
+            <div class="bg-white rounded-xl shadow-sm p-5 border border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-700 border-b pb-2 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-microchip text-amber-500"></i> Inverter Brand Selection
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Preferred Brand</label>
+                        <select id="inverterBrand" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-amber-400 outline-none">
+                            <option value="Deye" selected>Deye (Hybrid / Low-Voltage)</option>
+                            <option value="Luxpower">Luxpower (SNA / LXP Eco)</option>
+                            <option value="Victron">Victron Energy (MultiPlus-II)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Peak Load / Power (kW)</label>
+                        <input type="number" id="peakPower" value="5.0" step="0.5" min="0.5" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-amber-400 outline-none">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Energy & Load Parameters Card -->
+            <div class="bg-white rounded-xl shadow-sm p-5 border border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-700 border-b pb-2 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-bolt text-amber-500"></i> Energy & Load Parameters
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Daily Energy Use (kWh/day)</label>
+                        <input type="number" id="dailyKwh" value="15.0" step="1" min="1" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-amber-400 outline-none">
+                        <span class="text-xs text-gray-400">Total electricity used in 24 hours</span>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Backup Hours (h)</label>
+                        <input type="number" id="backupHours" value="6" step="1" min="1" max="24" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-amber-400 outline-none">
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Specifications Card -->
+            <div class="bg-white rounded-xl shadow-sm p-5 border border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-700 border-b pb-2 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-amber-500"></i> System Configurations
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Peak Sun Hours (h/day)</label>
+                        <input type="number" id="sunHours" value="5.5" step="0.5" min="2" max="10" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-amber-400 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Panel Output (Watts)</label>
+                        <select id="panelWattage" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-amber-400 outline-none">
+                            <option value="450">450 W Standard</option>
+                            <option value="550" selected>550 W High Yield</option>
+                            <option value="600">600 W Commercial</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Battery DoD</label>
+                        <select id="dod" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-amber-400 outline-none">
+                            <option value="0.80" selected>Lithium (80% DoD)</option>
+                            <option value="0.90">Advanced (90% DoD)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Sizing Output & Actions -->
+        <section class="space-y-6">
+
+            <!-- Calculations Summary Card -->
+            <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-xl shadow-lg p-5">
+                <h2 class="text-md font-semibold border-b border-slate-700 pb-2 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-calculator text-amber-400"></i> Recommended Sizing
+                </h2>
+
+                <div class="space-y-4">
+                    <!-- Inverter -->
+                    <div class="bg-slate-800/80 p-3 rounded-lg border border-slate-700">
+                        <span class="text-xs text-amber-400 font-semibold uppercase tracking-wider block">Selected Inverter Model</span>
+                        <div class="text-xl font-bold mt-1 text-amber-200" id="outInverterBrand">Deye 5kW Hybrid</div>
+                        <span class="text-xs text-gray-300 block mt-1" id="outInverterSpecs">SUN-5K-SG01LP1</span>
+                    </div>
+
+                    <!-- Battery -->
+                    <div class="bg-slate-800/80 p-3 rounded-lg border border-slate-700">
+                        <span class="text-xs text-amber-400 font-semibold uppercase tracking-wider block">Battery Bank</span>
+                        <div class="text-2xl font-bold mt-1" id="outBatteryKwh">--</div>
+                        <span class="text-xs text-gray-300 block mt-1" id="outBatteryModules">--</span>
+                    </div>
+
+                    <!-- Solar Array -->
+                    <div class="bg-slate-800/80 p-3 rounded-lg border border-slate-700">
+                        <span class="text-xs text-amber-400 font-semibold uppercase tracking-wider block">Solar Array Power</span>
+                        <div class="text-2xl font-bold mt-1" id="outSolarKw">--</div>
+                        <div class="text-xs text-amber-300 font-medium mt-1" id="outPanels">--</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions & Sharing -->
+            <div class="bg-white rounded-xl shadow-sm p-5 border border-gray-200 space-y-3">
+                <h3 class="text-sm font-bold text-gray-700 uppercase tracking-wide border-b pb-2">Actions & Sharing</h3>
+                
+                <button onclick="downloadPDF()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 transition text-sm">
+                    <i class="fa-solid fa-file-pdf text-red-400"></i> Download PDF Report
+                </button>
+
+                <button onclick="shareWhatsApp()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 transition text-sm">
+                    <i class="fa-brands fa-whatsapp text-lg"></i> Share on WhatsApp
+                </button>
+
+                <button onclick="shareEmail()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 transition text-sm">
+                    <i class="fa-solid fa-envelope"></i> Send via Email
+                </button>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- App Logic & Calculations Script -->
+    <script>
+        let currentResults = {};
+
+        function calculateSolar() {
+            const brand = document.getElementById('inverterBrand').value;
+            const peakKw = parseFloat(document.getElementById('peakPower').value) || 0;
+            const dailyKwh = parseFloat(document.getElementById('dailyKwh').value) || 0;
+            const backupHours = parseFloat(document.getElementById('backupHours').value) || 0;
+            const sunHours = parseFloat(document.getElementById('sunHours').value) || 5.5;
+            const panelW = parseInt(document.getElementById('panelWattage').value) || 550;
+            const dod = parseFloat(document.getElementById('dod').value) || 0.8;
+
+            // Inverter Model Selection Logic based on brand & peak load
+            let inverterName = "";
+            let inverterModelNo = "";
+            let recommendedKw = 5.0;
+
+            if (peakKw <= 3.6) recommendedKw = 3.6;
+            else if (peakKw <= 5.0) recommendedKw = 5.0;
+            else if (peakKw <= 6.0 || peakKw <= 6.5) recommendedKw = 6.0;
+            else if (peakKw <= 8.0) recommendedKw = 8.0;
+            else if (peakKw <= 12.0) recommendedKw = 12.0;
+            else recommendedKw = Math.ceil(peakKw);
+
+            if (brand === 'Deye') {
+                if (recommendedKw <= 5) { inverterName = "Deye 5kW Hybrid"; inverterModelNo = "SUN-5K-SG01LP1 (48V)"; }
+                else if (recommendedKw === 6) { inverterName = "Deye 6kW Hybrid"; inverterModelNo = "SUN-6K-SG04LP1 (48V)"; }
+                else if (recommendedKw <= 8) { inverterName = "Deye 8kW Hybrid"; inverterModelNo = "SUN-8K-SG01LP1 (48V)"; }
+                else { inverterName = `Deye ${recommendedKw}kW Hybrid`; inverterModelNo = `SUN-${recommendedKw}K-SG04LP3`; }
+            } else if (brand === 'Luxpower') {
+                if (recommendedKw <= 5) { inverterName = "Luxpower SNA5000"; inverterModelNo = "SNA5000 Eco Hybrid"; }
+                else if (recommendedKw <= 6.5) { inverterName = "Luxpower SNA6.5 PRO"; inverterModelNo = "SNA6.5K Eco Hybrid"; }
+                else if (recommendedKw <= 8) { inverterName = "Luxpower 8kW Hybrid"; inverterModelNo = "LXP 8kW Hybrid Inverter"; }
+                else { inverterName = `Luxpower ${recommendedKw}kW SNA12K`; inverterModelNo = "SNA12000 Eco Single Phase"; }
+            } else if (brand === 'Victron') {
+                if (recommendedKw <= 5) { inverterName = "Victron MultiPlus-II 5kVA"; inverterModelNo = "Quattro / MultiPlus-II 48/5000"; }
+                else if (recommendedKw <= 8) { inverterName = "Victron MultiPlus-II 8kVA"; inverterModelNo = "Dual MultiPlus-II 48/5000 Setup"; }
+                else { inverterName = `Victron 3-Phase ${recommendedKw}kVA`; inverterModelNo = "Modular MultiPlus-II 3-Phase System"; }
+            }
+
+            // 2. Battery Storage Calculation
+            const hourlyLoad = dailyKwh / 24;
+            const backupDemandKwh = hourlyLoad * backupHours;
+            const requiredBatteryKwh = backupDemandKwh / dod;
+            const moduleKwh = 5.12; // Standard 5.12kWh lithium module
+            const batteryModuleCount = Math.ceil(requiredBatteryKwh / moduleKwh);
+
+            // 3. Solar Array Calculation
+            const systemEfficiency = 0.8;
+            const requiredSolarKw = dailyKwh / (sunHours * systemEfficiency);
+            const totalPanelWatts = requiredSolarKw * 1000;
+            const panelCount = Math.ceil(totalPanelWatts / panelW);
+            const actualSolarKw = (panelCount * panelW) / 1000;
+
+            currentResults = {
+                clientName: document.getElementById('clientName').value || 'Valued Client',
+                clientLocation: document.getElementById('clientLocation').value || 'Gauteng',
+                brand: brand,
+                inverterName: inverterName,
+                inverterModelNo: inverterModelNo,
+                batteryKwh: requiredBatteryKwh.toFixed(2),
+                batteryModules: batteryModuleCount,
+                solarKw: requiredSolarKw.toFixed(2),
+                actualSolarKw: actualSolarKw.toFixed(2),
+                panelCount: panelCount,
+                panelWattage: panelW
+            };
+
+            // Update UI
+            document.getElementById('outInverterBrand').innerText = currentResults.inverterName;
+            document.getElementById('outInverterSpecs').innerText = currentResults.inverterModelNo;
+            document.getElementById('outBatteryKwh').innerText = `${currentResults.batteryKwh} kWh Usable`;
+            document.getElementById('outBatteryModules').innerText = `Qty: ${batteryModuleCount} x 5.12kWh 48V Modules`;
+            document.getElementById('outSolarKw').innerText = `${currentResults.solarKw} kWp Required`;
+            document.getElementById('outPanels').innerText = `Qty: ${panelCount} x ${panelW}W Panels (${actualSolarKw.toFixed(2)} kWp)`;
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const inputs = ['inverterBrand', 'peakPower', 'dailyKwh', 'backupHours', 'sunHours', 'panelWattage', 'dod', 'clientName', 'clientLocation'];
+            inputs.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('input', calculateSolar);
+                    el.addEventListener('change', calculateSolar);
+                }
+            });
+            calculateSolar();
+        });
+
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.setFillColor(245, 158, 11);
+            doc.rect(0, 0, 210, 25, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(18);
+            doc.setFont("helvetica", "bold");
+            doc.text("EASYWATTS SOLAR PROPOSAL REPORT", 14, 16);
+
+            doc.setTextColor(50, 50, 50);
+            doc.setFontSize(10);
+            doc.setFont("helvetica", "normal");
+            doc.text(`Client Name: ${currentResults.clientName}`, 14, 34);
+            doc.text(`Location: ${currentResults.clientLocation}`, 14, 40);
+            doc.text(`Date: ${new Date().toLocaleDateString()}`, 150, 34);
+
+            doc.autoTable({
+                startY: 48,
+                head: [['System Component', 'Calculated Requirement', 'Selected Brand & Hardware']],
+                body: [
+                    ['Inverter Unit', `Peak Load: ${document.getElementById('peakPower').value} kW`, `${currentResults.inverterName} (${currentResults.inverterModelNo})`],
+                    ['Battery Storage', `${currentResults.batteryKwh} kWh Usable Reserve`, `${currentResults.batteryModules} x 5.12kWh 48V Lithium Modules`],
+                    ['Solar Panel Array', `${currentResults.solarKw} kWp Generation Required`, `${currentResults.panelCount} Units x ${currentResults.panelWattage}W Panels (${currentResults.actualSolarKw} kWp Total)`]
+                ],
+                headStyles: { fillStyle: 'F', fillColor: [30, 41, 59], textColor: [255, 255, 255] },
+                theme: 'striped'
+            });
+
+            const finalY = doc.lastAutoTable.finalY + 15;
+            doc.setFontSize(10);
+            doc.setTextColor(100, 100, 100);
+            doc.text("Generated by EasyWatts Solar Sizer Pro.", 14, finalY);
+            doc.text("Visit www.easywatts.co.za to finalize equipment options and order installation.", 14, finalY + 6);
+
+            doc.save(`EasyWatts_Proposal_${currentResults.clientName.replace(/\s+/g, '_')}.pdf`);
+        }
+
+        function shareWhatsApp() {
+            const text = `*EasyWatts Solar Proposal for ${currentResults.clientName}*%0A` +
+                `----------------------------------%0A` +
+                `⚡ *Inverter:* ${currentResults.inverterName} (${currentResults.inverterModelNo})%0A` +
+                `🔋 *Battery Bank:* ${currentResults.batteryModules} x 5.12kWh (${currentResults.batteryKwh} kWh Usable)%0A` +
+                `☀️ *Solar Array:* ${currentResults.panelCount} x ${currentResults.panelWattage}W Panels (${currentResults.actualSolarKw} kWp)%0A` +
+                `----------------------------------%0A` +
+                `Visit www.easywatts.co.za to get started!`;
+            
+            window.open(`https://wa.me/?text=${text}`, '_blank');
+        }
+
+        function shareEmail() {
+            const subject = encodeURIComponent(`EasyWatts Solar PV Proposal - ${currentResults.clientName}`);
+            const body = encodeURIComponent(
+                `Hello ${currentResults.clientName},\n\n` +
+                `Here is your estimated EasyWatts solar system sizing report:\n\n` +
+                `- Selected Inverter: ${currentResults.inverterName} (${currentResults.inverterModelNo})\n` +
+                `- Battery Reserve: ${currentResults.batteryModules} x 5.12kWh Modules (${currentResults.batteryKwh} kWh @ 48V)\n` +
+                `- Solar Panel Array: ${currentResults.panelCount} x ${currentResults.panelWattage}W Panels (${currentResults.actualSolarKw} kWp)\n\n` +
+                `Please contact us or visit www.easywatts.co.za for a full quote.`
+            );
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
+        }
+    </script>
+</body>
+</html>
